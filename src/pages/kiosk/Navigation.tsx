@@ -21,7 +21,7 @@ const NavigationTailwind: React.FC<NavigationTailwindProps> = ({ currentPage, on
   const [currentTime, setCurrentTime] = useState<Date>(new Date())
   
   // Page names corresponding to the components
-  const pageNames: string[] = ['Home', 'Events', 'Exhibits', 'Map', 'Heat Map']
+  const pageNames: string[] = ['Home', 'Events', 'Exhibits', 'Map', 'Heat Map', 'ChatBot']
   
   // Update time every second
   useEffect(() => {

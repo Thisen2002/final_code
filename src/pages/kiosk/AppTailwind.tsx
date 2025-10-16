@@ -4,6 +4,7 @@ import SchedulePageTailwind from './SchedulePage'
 import ExhibitsPageTailwind from './ExhibitsPage'
 import MapPageTailwind from './MapPage'
 import HeatMapPageTailwind from './HeatMapPage'
+import ChatBotPage from './ChatBotPage'
 import IntroVideoTailwind from './IntroVideo'
 import NavigationTailwind from './Navigation'
 import FooterTailwind from './Footer'
@@ -13,8 +14,8 @@ const AppKiosk: React.FC = () => {
   const [showIntroVideo, setShowIntroVideo] = useState<boolean>(true);
   const inactivityTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Removed ContactPage from pages array
-  const pages = [HomePageTailwind, SchedulePageTailwind, ExhibitsPageTailwind, MapPageTailwind, HeatMapPageTailwind];
+  // Pages array including ChatBot
+  const pages = [HomePageTailwind, SchedulePageTailwind, ExhibitsPageTailwind, MapPageTailwind, HeatMapPageTailwind, ChatBotPage];
 
   const handleUserActivity = useCallback(() => {
     if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current);
