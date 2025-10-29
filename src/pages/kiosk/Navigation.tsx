@@ -19,40 +19,40 @@ interface NavigationTailwindProps {
 const NavigationTailwind: React.FC<NavigationTailwindProps> = ({ currentPage, onPageClick, pages }) => {
   // State for real-time clock
   const [currentTime, setCurrentTime] = useState<Date>(new Date())
-  
+
   // Page names corresponding to the components
-  const pageNames: string[] = ['Home', 'Events', 'Exhibits', 'Map', 'Heat Map']
-  
+  // Combined: include both Notifications and ChatBot
+  const pageNames: string[] = ['Home', 'Events', 'Exhibits', 'Map', 'Heat Map', 'Notifications', 'ChatBot']
+
   // Update time every second
   useEffect(() => {
     const timeInterval = setInterval(() => {
       setCurrentTime(new Date())
     }, 1000)
-    
+
     return () => clearInterval(timeInterval)
   }, [])
-  
+
   return (
     <div className="fixed left-5 top-5 w-[180px] h-[calc(100vh-50px)] bg-slate-800/90 backdrop-blur-3xl border border-white/15 rounded-3xl p-4 flex flex-col z-[1000] shadow-[0_25px_50px_rgba(0,0,0,0.25)] shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]">
       {/* Logo Section */}
       <div className="flex justify-center items-center mb-6 pb-6 border-b border-white/15">
-        <img 
-          src={logo} 
-          alt="University of Peradeniya Logo" 
+        <img
+          src={logo}
+          alt="University of Peradeniya Logo"
           className="w-[90px] h-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
         />
       </div>
-      
+
       {/* Navigation Menu */}
       <div className="flex flex-col gap-4 flex-1 overflow-y-auto overflow-x-hidden px-2 pt-3 pb-0.5 scrollbar-thin scrollbar-thumb-blue-500/60 scrollbar-track-slate-700/30 hover:scrollbar-thumb-blue-500/80">
         {pages.map((_, index) => (
           <div
             key={index}
-            className={`nav-item flex items-center gap-2 px-4 py-3 rounded-2xl bg-slate-700/60 backdrop-blur-md border-2 border-white/10 transition-all duration-300 ease-cubic-bezier(0.4,0,0.2,1) relative overflow-hidden cursor-pointer select-none ${
-              index === currentPage 
-                ? 'active bg-blue-500/30 border-blue-500/60 scale-105 shadow-[0_12px_35px_rgba(59,130,246,0.4)]' 
+            className={`nav-item flex items-center gap-2 px-4 py-3 rounded-2xl bg-slate-700/60 backdrop-blur-md border-2 border-white/10 transition-all duration-300 ease-cubic-bezier(0.4,0,0.2,1) relative overflow-hidden cursor-pointer select-none ${index === currentPage
+                ? 'active bg-blue-500/30 border-blue-500/60 scale-105 shadow-[0_12px_35px_rgba(59,130,246,0.4)]'
                 : 'hover:bg-sky-400/20 hover:border-sky-400/40 hover:scale-105 hover:shadow-[0_8px_25px_rgba(56,189,248,0.3)]'
-            }`}
+              }`}
             onClick={() => onPageClick(index)}
             style={{ cursor: 'pointer' }}
           >
@@ -62,17 +62,17 @@ const NavigationTailwind: React.FC<NavigationTailwindProps> = ({ currentPage, on
           </div>
         ))}
       </div>
-      
+
       {/* Date and Time Display */}
       <div className="mt-auto pt-4 border-t border-white/15 space-y-3">
         {/* Time Display */}
         <div className="flex items-center gap-3 px-4 py-3 bg-slate-700/40 backdrop-blur-md rounded-xl border border-white/10">
           <span className="text-xl">🕐</span>
           <span className="text-white/90 font-medium text-base">
-            {currentTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+            {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </span>
         </div>
-        
+
         {/* Date Display */}
         <div className="flex items-center gap-3 px-4 py-3 bg-slate-700/40 backdrop-blur-md rounded-xl border border-white/10">
           <span className="text-xl">📅</span>

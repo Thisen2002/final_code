@@ -1,4 +1,19 @@
-// backend/ratings.routes.js (CommonJS to match your db.js)
+/**
+ * backend/events/routes/ratings.routes.js
+ *
+ * Routes for handling anonymous per-visitor ratings saved in the `feedback`
+ * table. Ratings are stored as JSON in the `text_content` column so the shape
+ * of stored feedback is flexible (this router expects objects of the form:
+ *   { type: 'rating', visitor, rating, comment }
+ *).
+ *
+ * Reviewer notes:
+ * - Visitors are tracked via an httpOnly cookie named `visitorId` so no login
+ *   is required and we can provide 'my rating' endpoints (get/delete/update)
+ *   while keeping users anonymous.
+ * - This file intentionally uses CommonJS/Express to match the rest of the
+ *   backend in this repository.
+ */
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const { randomUUID } = require("crypto");
@@ -9,6 +24,7 @@ const router = express.Router();
 router.use(cookieParser());
 
 // anonymous identity via cookie (no login)
+// Middleware ensures `req.visitorId` is present and persists in an httpOnly cookie.
 router.use((req, res, next) => {
   const name = "visitorId";
   let id = req.cookies?.[name];

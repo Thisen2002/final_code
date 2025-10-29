@@ -4,27 +4,41 @@ import SchedulePageTailwind from './SchedulePage'
 import ExhibitsPageTailwind from './ExhibitsPage'
 import MapPageTailwind from './MapPage'
 import HeatMapPageTailwind from './HeatMapPage'
+import ChatBotPage from './ChatBotPage'
 import IntroVideoTailwind from './IntroVideo'
 import NavigationTailwind from './Navigation'
 import FooterTailwind from './Footer'
+import NotificationsPage from './NotificationsPage';
+
 
 const AppKiosk: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [showIntroVideo, setShowIntroVideo] = useState<boolean>(true);
-  const inactivityTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const inactivityTimerRef = useRef<number | null>(null);
 
-  // Removed ContactPage from pages array
-  const pages = [HomePageTailwind, SchedulePageTailwind, ExhibitsPageTailwind, MapPageTailwind, HeatMapPageTailwind];
+  // Combined: include both NotificationsPage and ChatBotPage
+  const pages = [
+    HomePageTailwind,
+    SchedulePageTailwind,
+    ExhibitsPageTailwind,
+    MapPageTailwind,
+    HeatMapPageTailwind,
+    NotificationsPage,
+    ChatBotPage
+  ];
 
+  // ✅ Fixed function
   const handleUserActivity = useCallback(() => {
-    if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current);
-    if (!showIntroVideo) {
-      inactivityTimerRef.current = setTimeout(() => {
-        setShowIntroVideo(true);
-        setCurrentPage(0);
-      }, 60000);
+    if (inactivityTimerRef.current) {
+      clearTimeout(inactivityTimerRef.current);
     }
-  }, [showIntroVideo]);
+
+    // Set a 60-second inactivity timer to reset to Home
+    inactivityTimerRef.current = window.setTimeout(() => {
+      setCurrentPage(0);
+      setShowIntroVideo(true); // optionally go back to intro after inactivity
+    }, 60000);
+  }, []);
 
   const handleIntroVideoClick = () => {
     setShowIntroVideo(false);
@@ -35,12 +49,40 @@ const AppKiosk: React.FC = () => {
   const handlePageClick = (pageIndex: number) => {
     setCurrentPage(pageIndex);
     handleUserActivity();
+    // Emit page change event for ChatbotIcon
+    const event = new CustomEvent('kioskPageChange', { detail: { pageIndex } });
+    window.dispatchEvent(event);
   };
 
   useEffect(() => {
     const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'] as const;
     const addEventListeners = () => events.forEach(event => document.addEventListener(event, handleUserActivity, true));
     const removeEventListeners = () => events.forEach(event => document.removeEventListener(event, handleUserActivity, true));
+
+    // Add listener for chat icon clicks
+    const handleChatIconClick = (e: CustomEvent) => {
+      setCurrentPage(e.detail.pageIndex);
+      handleUserActivity();
+      // Emit page change event for ChatbotIcon
+      const pageChangeEvent = new CustomEvent('kioskPageChange', { detail: { pageIndex: e.detail.pageIndex } });
+      window.dispatchEvent(pageChangeEvent);
+    };
+    window.addEventListener('switchToChat', handleChatIconClick as EventListener);
+
+    // Listen for kiosk navigation requests (from internal components)
+    const handleKioskNavigate = (e: Event) => {
+      try {
+        const detail = (e as CustomEvent).detail || {};
+        const pageIndex = typeof detail.pageIndex === 'number' ? detail.pageIndex : 3; // default to Map page
+        setCurrentPage(pageIndex);
+        handleUserActivity();
+        const pageChangeEvent = new CustomEvent('kioskPageChange', { detail: { pageIndex } });
+        window.dispatchEvent(pageChangeEvent);
+      } catch (err) {
+        console.error('handleKioskNavigate error', err);
+      }
+    };
+    window.addEventListener('kioskNavigate', handleKioskNavigate as EventListener);
 
     if (!showIntroVideo) {
       addEventListeners();
@@ -49,8 +91,11 @@ const AppKiosk: React.FC = () => {
       removeEventListeners();
       if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current);
     }
+
     return () => {
       removeEventListeners();
+      window.removeEventListener('switchToChat', handleChatIconClick as EventListener);
+      window.removeEventListener('kioskNavigate', handleKioskNavigate as EventListener);
       if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current);
     };
   }, [showIntroVideo, handleUserActivity]);
@@ -71,6 +116,7 @@ const AppKiosk: React.FC = () => {
                        linear-gradient(180deg, rgba(56,189,248,0.05) 0%, transparent 100%)`
         }}
       />
+
       {/* Navigation */}
       <NavigationTailwind currentPage={currentPage} onPageClick={handlePageClick} pages={pages} />
 
@@ -88,8 +134,8 @@ const AppKiosk: React.FC = () => {
               <span className="mx-8">• University Medical Center: +94 81 239 2361</span>
               <span className="mx-8">• Event Coordinator: +94 81 239 3000</span>
               <span className="mx-8">• Technical Support: +94 81 239 3001</span>
+            </div>
           </div>
-        </div>
         )}
 
         {/* Footer */}
@@ -97,28 +143,27 @@ const AppKiosk: React.FC = () => {
       </div>
 
       {/* Marquee Animation Styles */}
-      <style dangerouslySetInnerHTML={{
-        __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
           @keyframes marquee {
             0% { transform: translateX(100%); }
             100% { transform: translateX(-100%); }
           }
-
           .animate-marquee {
             display: inline-block;
             animation: marquee 10s linear infinite;
           }
-
           @keyframes marquee-fast {
             0% { transform: translateX(100%); }
             100% { transform: translateX(-100%); }
           }
-
           .animate-marquee-fast {
             animation: marquee-fast 30s linear infinite;
           }
         `
-      }} />
+        }}
+      />
     </div>
   );
 };

@@ -166,7 +166,7 @@ function drawRoute(result) {
 
 let userMarker = null;
 
-function drawMarker(latLng) {
+function drawMarker(latLng, kiosk_mode) {
   if(userMarker){
     userMarker.remove();
     userMarker = null;

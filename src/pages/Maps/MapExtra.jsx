@@ -271,13 +271,13 @@ export default function MapExtra({kiosk_mode=false}) {
 
   useEffect(() => {
     addGpsListner((latLng) => {
-      drawMarker(latLng);
+      drawMarker(latLng, !kiosk_mode);
     })
   }, []);
 
   useEffect(() => {
     addGpsListner((latLng) => {
-      drawMarker(latLng);
+      drawMarker(latLng, !kiosk_mode);
     })
   }, []);
 

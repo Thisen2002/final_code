@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 interface Exhibit {
   exhibit_id: string;
@@ -21,8 +22,21 @@ interface BuildingResponse {
 
 // Predefined tags - moved outside component to avoid re-renders
 const PREDEFINED_TAGS: string[] = [
-  'AI', 'ICT', 'Structures', 'Mechanical', 'Civil', 
-  'Power', 'Automation', 'Robotics', 'Electronics', 'Software'
+  'Electronics and Embedded Systems',
+    'Artificial Intelligence Machine Learning and Data Science',
+    'Biomedical Engineering and Mechatronics',
+    'Information Technology and Computing',
+    'Science, Entertainment and Mathematics of Engineering',
+    'Materials and Nanotechnology',
+    'Energy Environment and Sustainability & Nature Based Technologies',
+    'Road Safety, Transportation Planning and Engineering Survey',
+    'Pilot Plant',
+    'Renewable energy and sustainability',
+    'Automobile',
+    'Additive Manufacturing and 3D Printing',
+    'Computer Numerical Control (CNC)',
+    'Robotics and Automation',
+    'Power Systems and Smart Grids'
 ]
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
@@ -36,20 +50,26 @@ const ExhibitsPageTailwind: React.FC<ExhibitsPageTailwindProps> = () => {
   const [selectedTag, setSelectedTag] = useState<string>('') // Empty for all
   const [searchQuery, setSearchQuery] = useState<string>('') // Search input
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false) // Dropdown state
+  const navigate = useNavigate()
 
   // Color mapping for different tag categories
   const getTagColor = (tag: string): { bg: string; text: string; border: string } => {
     const colors = {
-      'AI': { bg: '#001affff', text: '#FFFFFF', border: '#001affff' }, // Dark Blue
-      'ICT': { bg: '#098beeff', text: '#FFFFFF', border: '#098beeff' }, // Blue
-      'Structures': { bg: '#eea933ff', text: '#FFFFFF', border: '#eea933ff' }, // Amber
-      'Mechanical': { bg: '#a5a74dff', text: '#FFFFFF', border: '#a5a74dff' }, // Red
-      'Civil': { bg: '#EC4899', text: '#FFFFFF', border: '#EC4899' }, // Pink
-      'Power': { bg: '#8b9894ff', text: '#FFFFFF', border: '#8b9894ff' }, // Emerald
-      'Automation': { bg: '#06B6D4', text: '#FFFFFF', border: '#06B6D4' }, // Cyan
-      'Robotics': { bg: '#9658b6ff', text: '#FFFFFF', border: '#9658b6ff' }, // Purple
-      'Electronics': { bg: '#c57b70ff', text: '#FFFFFF', border: '#c57b70ff' }, // Orange
-      'Software': { bg: '#37795dff', text: '#FFFFFF', border: '#37795dff' }, // Indigo
+      'Electronics and Embedded Systems': { bg: '#001aff', text: '#FFFFFF', border: '#001affff' },
+      'Artificial Intelligence Machine Learning and Data Science': { bg: '#098bee', text: '#FFFFFF', border: '#098beeff' },
+      'Biomedical Engineering and Mechatronics': { bg: '#eea933', text: '#FFFFFF', border: '#eea933' },
+      'Information Technology and Computing': { bg: '#a5a74d', text: '#FFFFFF', border: '#a5a74d' },
+      'Science, Entertainment and Mathematics of Engineering': { bg: '#EC4899', text: '#FFFFFF', border: '#EC4899' },
+      'Materials and Nanotechnology': { bg: '#8b9894', text: '#FFFFFF', border: '#8b9894' },
+      'Energy Environment and Sustainability & Nature Based Technologies': { bg: '#06B6D4', text: '#FFFFFF', border: '#06B6D4' },
+      'Road Safety, Transportation Planning and Engineering Survey': { bg: '#9658b6', text: '#FFFFFF', border: '#9658b6ff' },
+      'Pilot Plant': { bg: '#c57b70', text: '#FFFFFF', border: '#c57b70' },
+      'Renewable energy and sustainability': { bg: '#37795d', text: '#FFFFFF', border: '#37795d' },
+      'Automobile': { bg: '#02102b', text: '#FFFFFF', border: '#02102b' },
+      'Additive Manufacturing and 3D Printing': { bg: '#4d2040', text: '#FFFFFF', border: '#4d2040' },
+      'Computer Numerical Control (CNC)': { bg: '#585c19', text: '#FFFFFF', border: '#585c19' },
+      'Robotics and Automation': { bg: '#6a3c3f', text: '#FFFFFF', border: '#6a3c3f' },
+      'Power Systems and Smart Grids': { bg: '#323073', text: '#FFFFFF', border: '#323073' }
     }
     return colors[tag as keyof typeof colors] || { bg: '#6B7280', text: '#FFFFFF', border: '#9CA3AF' } // Default gray
   }
@@ -312,27 +332,46 @@ const ExhibitsPageTailwind: React.FC<ExhibitsPageTailwindProps> = () => {
           ) : displayExhibits.length > 0 ? (
             displayExhibits.map((exhibit, index) => (
               <div 
-                key={exhibit.exhibit_id || index} 
-                className="bg-transparent backdrop-blur-xl rounded-2xl border-2 border-[rgba(59,130,246,0.6)] p-6 shadow-[0_8px_32px_rgba(0,0,0,0.3)] transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(0,0,0,0.4)] animate-slideIn"
-                style={{animationDelay: `${index * 0.1}s`}}
-              >
+                  key={exhibit.exhibit_id || index} 
+                  className="relative bg-transparent backdrop-blur-xl rounded-2xl border-2 border-[rgba(59,130,246,0.6)] p-6 shadow-[0_8px_32px_rgba(0,0,0,0.3)] transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(0,0,0,0.4)] animate-slideIn"
+                  style={{animationDelay: `${index * 0.1}s`}}
+                >
                 {/* Multiple Tag Badges */}
-                <div className="absolute top-4 right-4 flex gap-2 max-w-none justify-end overflow-x-auto whitespace-nowrap">
-                  {exhibit.tags.map((tagName, tagIndex) => (
-                    <div 
-                      key={tagIndex}
-                      className="px-3 py-1 rounded-full text-white text-sm font-bold shadow-lg border-2 flex-shrink-0"
-                      style={{ 
-                        backgroundColor: getTagColor(tagName).bg,
-                        borderColor: getTagColor(tagName).border,
-                        color: getTagColor(tagName).text
-                      }}
-                    >
-                      <span>
-                        {tagName.toUpperCase()}
-                      </span>
-                    </div>
-                  ))}
+                <div className="absolute top-4 left-4 right-4 overflow-x-hidden whitespace-nowrap">
+                  
+                  {/* Inline keyframes */}
+                  <style>
+                    {`
+                      @keyframes scroll-horizontal {
+                        0% { transform: translateX(100%); }
+                        100% { transform: translateX(-100%); }
+                      }
+                    `}
+                  </style>
+
+                  <div
+                    className="flex gap-2"
+                    style={{
+                      display: "inline-flex",
+                      animation: "scroll-horizontal 15s linear infinite",
+                    }}
+                  >
+                    {exhibit.tags.map((tagName, tagIndex) => (
+                      <div 
+                        key={tagIndex}
+                        className="px-3 py-1 rounded-full text-white text-xs font-bold shadow-lg border-2 flex-shrink-0"
+                        style={{ 
+                          backgroundColor: getTagColor(tagName).bg,
+                          borderColor: getTagColor(tagName).border,
+                          color: getTagColor(tagName).text,
+                        }}
+                      >
+                        <span style={{ fontSize: "0.75rem", lineHeight: "1rem" }}>
+                          {tagName.toUpperCase()}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
                 
                 {/* Exhibit Information */}
@@ -355,6 +394,53 @@ const ExhibitsPageTailwind: React.FC<ExhibitsPageTailwindProps> = () => {
                       </span>
                     </div>
                   </div>
+
+          <button
+            className="absolute right-4 bottom-4 py-2 px-3 rounded-lg font-medium text-white bg-green-600 border border-green-600 hover:bg-green-700 transition-colors text-sm flex items-center justify-center z-10"
+                      onClick={() => {
+                        if (!exhibit.location) {
+                          alert('No location set for this exhibit');
+                          return;
+                        }
+
+                        // If we're inside the kiosk app (path starts with /kiosk), switch pages
+                        // by dispatching a custom event and update the URL query param so
+                        // the MapExtra component can pick it up on mount.
+                        try {
+                          if (typeof window !== 'undefined' && window.location.pathname.startsWith('/kiosk')) {
+                            const url = new URL(window.location.href);
+                            url.searchParams.set('location', exhibit.location);
+                            // Use replaceState so we don't add history entries
+                            window.history.replaceState({}, '', url.toString());
+                            window.dispatchEvent(new CustomEvent('kioskNavigate', { detail: { pageIndex: 3 } }));
+                            return;
+                          }
+                        } catch (e) {
+                          // ignore and fall back to router navigation
+                          console.error('kiosk navigate fallback error', e);
+                        }
+
+                        // Fallback: navigate to the regular /map route (non-kiosk)
+                        navigate(`/map?location=${encodeURIComponent(exhibit.location)}`);
+                      }}
+                      title="Navigate to location"
+                  >
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      width="22" 
+                      height="22" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      strokeWidth="2" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round"
+                    >
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </button>
+
                 </div>
               </div>
             ))

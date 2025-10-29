@@ -22,6 +22,7 @@ CREATE TABLE Building (
     building_name VARCHAR(150) NOT NULL UNIQUE,  -- enforce unique names
     description TEXT,
     exhibits TEXT[],  -- array to hold multiple exhibit names/IDs
+    exhibit_tags JSONB,  -- array to hold multiple tags
     CONSTRAINT fk_building_zone FOREIGN KEY (zone_ID) REFERENCES Zone(zone_ID) ON DELETE CASCADE
 );
 
